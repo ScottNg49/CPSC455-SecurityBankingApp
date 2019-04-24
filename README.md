@@ -12,22 +12,23 @@ Scott Ng
 
 ### How to run project
 Install these packages before running with these commands
-*npm install express*
 
-*npm install client-sessions*
+**>** *npm install express*
 
-*npm install body-parser*
+**>** *npm install client-sessions*
 
-*npm install body-parser-xml*
+**>** *npm install body-parser*
 
-*npm install xss-filters*
+ **>** *npm install body-parser-xml*
 
-*npm install helmet*
+**>** *npm install xss-filters*
+
+**>** *npm install helmet*
 
 
 
 Run project with this command
-*node dashboard.js*
+**>** *node dashboard.js*
 
 To exit program, within terminal, **[CTRL + C]**
 
