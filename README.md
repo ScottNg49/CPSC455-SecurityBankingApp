@@ -61,10 +61,11 @@ To exit program, within terminal, **[CTRL + C]**
 		
 ### Files included along with descriptions
 **dashboard.js**: Node.js file that will process all front-end and back-end functions. When login is successful, it will redirect to dashboard page.
+
 **index.html**: Initial page when you access localhost:3000. Includes a login page where you are to input login username and password in order get access the dashboard.
+
 **register.html**: Page where you input Username, first name, last name, email address, password
+
 **mydb.txt**: holds user information that is parsed by XML into JSON format
+
 **/node_modules**: stores “npm” packages
-
-
-
