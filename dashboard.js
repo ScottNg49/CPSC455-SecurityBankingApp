@@ -238,6 +238,20 @@ app.use('/add_accounts',function(req,res){
       res.send(page)
 
 });
+
+// displayBankStatement(string user): get user name and outputs html format of bankstatement pulled from mydb.txt
+function displayBankStatement(user) {
+	var textline = retObj(user);
+	var page = "";
+
+	for (var i = 0; i < Object.keys(textline.account.bankacc).length; i++) {
+		let acc = "acc" + (i+1);
+		page += "Bank account no." + (i+1) + ": $ " + parseInt(textline.account.bankacc[acc]).toFixed(2) + "<br><br>";
+	}
+
+	return page;
+};
+
 app.use('/dashboard', function(req,res) {
 
     if(!req.session.username)
@@ -250,6 +264,7 @@ app.use('/dashboard', function(req,res) {
     var page = "<html>"
     page += "<title> NorthSide Dashboard</title>"
     page += "<body> <h1> Welcome back to NorthSide Banking, " + name + "</h1><br><br>"
+	page += displayBankStatement(name);
     page += "<a href='http://localhost:3000/add_accounts'>"
     page += "<button>Add Accounts!</button> </a><br><br>"
     page += "<a href='http://localhost:3000/deposit'>"
