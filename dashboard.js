@@ -1,8 +1,12 @@
 const express = require('express');
 const sessions = require('client-sessions');
 const bodyParser = require("body-parser");
+const helmet = require('helmet')
+
 require('body-parser-xml')(bodyParser);
+
 "use strict"
+var xssFilters = require('xss-filters');
 var app = express()
 var fs=require('fs');
 var os=require('os');
@@ -79,12 +83,22 @@ function retObj(user) {
 
 app.use(bodyParser.xml());
 
+app.use(helmet.contentSecurityPolicy({
+	directives:{
+		defaultSrc: ["'self', 'unsafe-inline'"],
+		styleSrc: ["'self', 'unsafe-inline'"]
+	}
+}))
+
 // cookie
 app.use(sessions({
     cookieName: 'session',
-    secret: '0x8i3Jlxnw3NxA52B7jF',
+    secret: '0x8i3Jl4nw3NgA52B7jF',
     duration: 3*60*1000,
-    cookie: {httpOnly: true}
+    activeDuration: 3*60*1000,
+    httpOnly: true,
+    secure: true,
+    ephemeral: true
     }));
 
 
@@ -119,7 +133,7 @@ app.post('/login',function(req,res){
 	var tempobj=undefined;
 	// is valid user?
 
-  if (userExist(user)){
+  if (userExist(xssFilters.inHTMLData(user))){
     console.log("We Found a Username!");
     var tempobj=retObj(user);
     correctPass=tempobj.account.password.toString();
@@ -233,7 +247,7 @@ app.use('/add_accounts',function(req,res){
       page += "}"
       page += "</script>"
 
-      page += "<body>"
+      page += "<body style='background-color:rgba(13,138,206,0.5);'>"
       page += "<h1>Northside Banking Add Account Page</h1><br><br>"
 
       // start form
@@ -262,8 +276,8 @@ app.use('/dashboard', function(req,res) {
     let name = req.session.username
     var page = "<html>"
     page += "<title> NorthSide Dashboard</title>"
-    page += "<body> <h1> Welcome back to NorthSide Banking, " + name + "</h1><br><br>"
-    page += displayBankStatement(name);
+    page += "<body style='background-color:rgba(13,138,206,0.5)'> <h1> Welcome back to NorthSide Banking, " + name + "</h1><br><br>"
+    page += displayBankStatement(xssFilters.inHTMLData(name));
     page += "<a href='http://localhost:3000/add_accounts'>"
     page += "<button>Add Accounts!</button> </a><br><br>"
     page += "<a href='http://localhost:3000/deposit'>"
@@ -330,9 +344,9 @@ app.get('/deposit', function(req,res) {
     page += "}};"
     page += "</script>"
 
-    page += "<body>"
+    page += "<body style='background-color:rgba(13,138,206,0.5);'>"
     page += "<h1>Northside Banking Deposit Page</h1><br><br>"
-    page += displayBankStatement(req.session.username);
+    page += displayBankStatement(xssFilters.inHTMLData(req.session.username));
 
     // start form
     page += "<form onsubmit='return loadDoc();'>"
@@ -422,9 +436,9 @@ app.get('/withdraw', function(req,res) {
     page += "}};"
     page += "</script>"
 
-    page += "<body>"
+    page += "<body style='background-color:rgba(13,138,206,0.5);'>"
     page += "<h1>Northside Banking Withdrawing Page</h1><br><br>"
-    page += displayBankStatement(req.session.username);
+    page += displayBankStatement(xssFilters.inHTMLData(req.session.username));
 
 
     // start form
@@ -522,9 +536,9 @@ app.get('/transfer', function(req,res) {
     page += "};"
     page += "</script>"
 
-    page += "<body>"
+    page += "<body style='background-color:rgba(13,138,206,0.5);'>"
     page += "<h1>Northside Banking Transfer Page</h1><br><br>"
-    page += displayBankStatement(req.session.username);
+    page += displayBankStatement(xssFilters.inHTMLData(req.session.username));
 
 
     // form start
