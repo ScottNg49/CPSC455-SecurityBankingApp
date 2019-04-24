@@ -1,0 +1,32 @@
+
+<html>
+<body style="background-color:rgba(255,0,0,0.5);">
+<script>
+function loadDoc() {
+  var message= "<?xml version='1.0'?>"+"<account>"+"<username>"+document.getElementById('username').value+
+  "</username>"+"<password>"+document.getElementById("password").value+"</password>"+"</account>";
+  var xhttp = new XMLHttpRequest();
+  xhttp.open("POST", "/login", false);
+  xhttp.setRequestHeader("Content-type", "text/xml");
+  xhttp.send(message);
+}
+</script>
+
+<div>
+  <title> Welcome to NorthSide Banking</title>
+  <h1>Welcome to NorthSide Banking</h1>
+  <h2> Please Login Here:</h1>
+  <form>
+    <label for='username'>Username:</label>
+    <input type='text' id='username' name='username'>
+    <label for='pass'>Password:</label>
+    <input type='password' id='password' name='password'>
+    <input type='submit' value='Login' onclick="loadDoc()">
+    </form>
+  </div>
+
+<div>
+
+	<h2><a href="register.html">Click here</a> to register</h2>
+
+</html>
