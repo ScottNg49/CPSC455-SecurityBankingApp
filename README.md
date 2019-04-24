@@ -1,5 +1,5 @@
 # CPSC455-SecurityBankingApp	
-### Program created by: <Input your First, last name along with email address>
+### Program created by: 
 Nelson Luong nluong@csu.fullerton.edu
 
 Daniel Truong ddtruong50@csu.fullerton.edu
@@ -12,17 +12,17 @@ Scott Ng
 
 ### How to run project
 Install these packages before running with these commands
-npm install express
-npm install client-sessions
-npm install body-parser
-npm install body-parser-xml
-npm install xss-filters
-npm install helmet
+*npm install express*
+*npm install client-sessions*
+*npm install body-parser*
+*npm install body-parser-xml*
+*npm install xss-filters*
+*npm install helmet*
 
 Run project with this command
-node dashboard.js
+*node dashboard.js*
 
-To exit program, within terminal, [CTRL + C]
+To exit program, within terminal, **[CTRL + C]**
 
 ### This banking application contains these features and functionality:
 - User login (unique username & password)
@@ -44,11 +44,11 @@ To exit program, within terminal, [CTRL + C]
 -uses a CSP header to only allow information from trusted sources
 		
 ### Files included along with descriptions
-dashboard.js: Node.js file that will process all front-end and back-end functions. When login is successful, it will redirect to dashboard page.
-index.html: Initial page when you access localhost:3000. Includes a login page where you are to input login username and password in order get access the dashboard.
-register.html: Page where you input Username, first name, last name, email address, password
-mydb.txt: holds user information that is parsed by XML into JSON format
-node_modules: stores “npm” packages
+**dashboard.js**: Node.js file that will process all front-end and back-end functions. When login is successful, it will redirect to dashboard page.
+**index.html**: Initial page when you access localhost:3000. Includes a login page where you are to input login username and password in order get access the dashboard.
+**register.html**: Page where you input Username, first name, last name, email address, password
+**mydb.txt**: holds user information that is parsed by XML into JSON format
+**/node_modules**: stores “npm” packages
 
 
 
