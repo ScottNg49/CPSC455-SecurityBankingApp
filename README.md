@@ -1,9 +1,13 @@
 # CPSC455-SecurityBankingApp	
 ### Program created by: <Input your First, last name along with email address>
 Nelson Luong nluong@csu.fullerton.edu
+
 Daniel Truong ddtruong50@csu.fullerton.edu
+
 John Nguyen block3d@csu.fullerton.edu
+
 Long Nguyen Longnguyen0024@csu.fullerton.edu 
+
 Scott Ng 
 
 ### How to run project
