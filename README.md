@@ -28,7 +28,9 @@ Install these packages before running with these commands
 
 
 Run project with this command
+
 **>** *node dashboard.js*
+
 
 To exit program, within terminal, **[CTRL + C]**
 
@@ -44,12 +46,18 @@ To exit program, within terminal, **[CTRL + C]**
 
 
 ### Security implementations:
--Implemented Sessions which log the User off after 3 minutes of idle.
+- Implemented Sessions which log the User off after 3 minutes of idle.
+
 - HTML sanitizing
--used xss-filters to filter user input 
--only numbers can be entered into the deposit/withdrawal/transfer fields
--data is encoded in XML when passed from front-end to back-end
--uses a CSP header to only allow information from trusted sources
+
+- used xss-filters to filter user input 
+
+- only numbers can be entered into the deposit/withdrawal/transfer fields
+
+- data is encoded in XML when passed from front-end to back-end
+
+- uses a CSP header to only allow information from trusted sources
+
 		
 ### Files included along with descriptions
 **dashboard.js**: Node.js file that will process all front-end and back-end functions. When login is successful, it will redirect to dashboard page.
