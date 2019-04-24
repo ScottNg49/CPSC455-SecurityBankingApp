@@ -1,4 +1,6 @@
 # CPSC455-SecurityBankingApp	
+This program is a banking application with a login functionality meant to demonstrate secure web application development and deployment. The web application utilizes secure coding practices. More details for the implementation are located within the rest of the document. Its purpose is for M. Gofman’s Web Security course. 
+
 ### Program created by: 
 Scott Ng scottng49@csu.fullerton.edu 
 
