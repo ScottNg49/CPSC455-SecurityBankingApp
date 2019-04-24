@@ -45,8 +45,6 @@ To exit program, within terminal, **[CTRL + C]**
 - Deposit money into accounts
 - Transfer money between accounts
 - Logoff from account
--
-
 
 ### Security implementations:
 - Implemented Sessions which log the User off after 3 minutes of idle.
