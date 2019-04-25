@@ -1,0 +1,7 @@
+{"account":{"username":["feawf"],"password":["feawfwaf"],"fname":["ewfaweaf"],"lname":["ewafwea"],"email":["feawfewa@cdas.com"],"bankacc":{"acc1":"0","acc2":"0","acc3":"0"}}}
+{"account":{"username":["feafawf"],"password":["e8219eu218"],"fname":["eawfaew"],"lname":["fewafeaw"],"email":["fewafeaw@yahoo.com"],"bankacc":{"acc1":"0","acc2":"0","acc3":"0"}}}
+{"account":{"username":["fewafaw"],"password":["dwqdwq"],"fname":["feafaw"],"lname":["fewafeaw"],"email":["fewafeaw@yahoo.com"],"bankacc":{"acc1":"0","acc2":"0","acc3":"0"}}}
+{"account":{"username":["John"],"password":["Secret"],"fname":["John"],"lname":["John"],"email":["fenwafneao@yahoo.com"],"bankacc":{"acc1":7450,"acc2":12164,"acc3":11000,"acc4":0,"acc5":0,"acc6":0,"acc7":0}}}
+{"account":{"username":["dwadd"],"password":["dwqdwq"],"fname":["ddwqdwq"],"lname":["qwdwq"],"email":["dwqdwq@a.com"],"bankacc":{"acc1":"0","acc2":"0","acc3":"0"}}}
+{"account":{"username":["wdadwa"],"password":["iewhuih"],"fname":["dawd"],"lname":["dwadwa"],"email":["wadwa@gmail.com"],"bankacc":{"acc1":"0","acc2":"0","acc3":"0"}}}
+{"account":{"username":["edaw"],"password":["deawdea"],"fname":["deawd"],"lname":["edawdwa"],"email":["deawd@yahoo.com"],"bankacc":{"acc1":"0","acc2":"0","acc3":"0"}}}

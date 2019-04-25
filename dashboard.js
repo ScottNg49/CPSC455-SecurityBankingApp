@@ -8,8 +8,35 @@ require('body-parser-xml')(bodyParser);
 "use strict"
 var xssFilters = require('xss-filters');
 var app = express()
+app.use(express.static(__dirname + '/public'));
+
 var fs=require('fs');
 var os=require('os');
+
+app.use(bodyParser.xml());
+
+app.use(helmet.contentSecurityPolicy({
+	directives:{
+		defaultSrc: ["'self'"],
+		styleSrc: ["'self'"],
+		scriptSrc: ["'self'"]
+
+ },
+
+
+}));
+
+// cookie
+app.use(sessions({
+    cookieName: 'session',
+    secret: '0x8i3Jl4nw3NgA52B7jF',
+    duration: 3*60*1000,
+    activeDuration: 3*60*1000,
+    httpOnly: true,
+    secure: true,
+    ephemeral: true
+    }));
+
 
 // displayBankStatement(string user): get user name and outputs html format of bankstatement pulled from mydb.txt
 function displayBankStatement(user) {
@@ -80,26 +107,6 @@ function retObj(user) {
 	}
 	return textline;
 };
-
-app.use(bodyParser.xml());
-
-app.use(helmet.contentSecurityPolicy({
-	directives:{
-		defaultSrc: ["'self', 'unsafe-inline'"],
-		styleSrc: ["'self', 'unsafe-inline'"]
-	}
-}))
-
-// cookie
-app.use(sessions({
-    cookieName: 'session',
-    secret: '0x8i3Jl4nw3NgA52B7jF',
-    duration: 3*60*1000,
-    activeDuration: 3*60*1000,
-    httpOnly: true,
-    secure: true,
-    ephemeral: true
-    }));
 
 
 
@@ -213,7 +220,28 @@ app.post('/create',function(req,res){
 });
 
 app.post('/add_success', function(req,res) {
-	// do back end processing here
+		// do back end processing here
+			let tempobj=retObj(req.session.username); //sets temp obj to the user logged in
+
+			console.log(Object.keys(tempobj.account.bankacc).length)
+			let acc="acc"+((Object.keys(tempobj.account.bankacc).length)+1)
+			newval=0;
+			console.log(newval);
+			tempobj.account.bankacc[acc]=newval;
+			console.log(tempobj);
+
+			//Writes to the database the new line.
+			fs.readFile('mydb.txt', 'utf8', function (err,data)
+			{
+
+				var formatted = data.replace(JSON.stringify(retObj(req.session.username)),JSON.stringify(tempobj));
+				fs.writeFile('mydb.txt', formatted, 'utf8', function (err)
+				{
+					if (err) return console.log(err);
+				});
+			});
+
+
     	console.log(req.body);
     	console.log("add account Success");
     	res.end()
@@ -231,28 +259,24 @@ app.use('/add_accounts',function(req,res){
       page += "<html>"
 
       // xml data passing
-      page += "<script>"
-      page += "function loadDoc() {"
-      page += "var message = \"<?xml version='1.0'?>\"+\"<username>\"+\"<bankacc>\"+'one'+"
-      page += "\"</bankacc>\"+\"<money>\"+'zero'+\"</money>\"+\"</username>\";"
-      page += "var xhttp = new XMLHttpRequest();"
 
-      page += "xhttp.onreadystatechange= function() {"
-      page += "if(xhttp.readyState == 4 && xhttp.status == 200) {"
-      page += "alert('Added one Bank account');}}; "
 
-      page += "xhttp.open(\"POST\", \"/add_success\", false);"
-      page += "xhttp.setRequestHeader('Content-type', 'text/xml');"
-      page += "xhttp.send(message);"
-      page += "}"
-      page += "</script>"
-
-      page += "<body style='background-color:rgba(13,138,206,0.5);'>"
+      page += "<body <body bgcolor='#E6E6FA'>"
       page += "<h1>Northside Banking Add Account Page</h1><br><br>"
-
+			page += displayBankStatement(xssFilters.inHTMLData(req.session.username));
       // start form
+			page +="<script type='text/javascript' src='./srcaccadd.js'></script>"
       page +="<h2>Click to add an account</h2>"
-      page +="<input id=\"clickMe\" type=\"button\" value=\"clickme\" onclick=\"loadDoc();\" />"
+			page += "<form name='addOne'>"
+			// page += "<form action='/deposit_success' method='POST'>"
+
+			// drop down menu
+			page += "<label for='account'>Add an account   </label>"
+			page += "<select id=account>"
+			page += "<option value='acc1'>add One account</option>"
+			page += "</select><br><br>"
+			page += "<input type='submit' value='Confirm'>"
+			page += "</form>"
 
       // go to main page
       page += "<a href='http://localhost:3000/dashboard'>"
@@ -276,7 +300,7 @@ app.use('/dashboard', function(req,res) {
     let name = req.session.username
     var page = "<html>"
     page += "<title> NorthSide Dashboard</title>"
-    page += "<body style='background-color:rgba(13,138,206,0.5)'> <h1> Welcome back to NorthSide Banking, " + name + "</h1><br><br>"
+    page += "<body <body bgcolor='#E6E6FA'> <h1> Welcome back to NorthSide Banking, " + name + "</h1><br><br>"
     page += displayBankStatement(xssFilters.inHTMLData(name));
     page += "<a href='http://localhost:3000/add_accounts'>"
     page += "<button>Add Accounts!</button> </a><br><br>"
@@ -322,34 +346,14 @@ app.get('/deposit', function(req,res) {
     page += "<html>"
 
     // xml data passing
-    page += "<script>"
-    page += "function loadDoc() {"
-    page += "if(document.getElementById(\"deposit\").value > 10000) {"
-    page += "alert('Maximum deposit $10000! Retry!'); "
-    page += " } else if (document.getElementById(\"deposit\").value < 10) {"
-    page += "alert('Minimum deposit $10! Retry!');"
-    page += " } else {"
-    page += "var message = \"<?xml version='1.0'?>\"+\"<username>\"+\"<account>\"+document.getElementById('account').value+"
-    page += "\"</account>\"+\"<deposit>\"+document.getElementById(\"deposit\").value+\"</deposit>\"+\"</username>\";"
-    page += "var xhttp = new XMLHttpRequest();"
 
-    page += "xhttp.onreadystatechange= function() {"
-    page += "if(xhttp.readyState == 4 && xhttp.status == 200) {"
-    page += "alert('Attempting to Deposit $' + document.getElementById('deposit').value)}}; "
 
-    page += "xhttp.open(\"POST\", \"/deposit_success\", false);"
-    page += "xhttp.setRequestHeader('Content-type', 'text/xml');"
-    page += "xhttp.send(message);"
-    //page += "alert('Attempting to Deposit $' + document.getElementById(\"deposit\").value)"
-    page += "}};"
-    page += "</script>"
-
-    page += "<body style='background-color:rgba(13,138,206,0.5);'>"
+    page += "<body bgcolor='#E6E6FA'>"
     page += "<h1>Northside Banking Deposit Page</h1><br><br>"
     page += displayBankStatement(xssFilters.inHTMLData(req.session.username));
-
+		page += "<script type='text/javascript' src='./srcdeposit.js'></script>"
     // start form
-    page += "<form onsubmit='return loadDoc();'>"
+    page += "<form name='myFormDep'>"
     // page += "<form action='/deposit_success' method='POST'>"
 
     // drop down menu
@@ -418,31 +422,15 @@ app.get('/withdraw', function(req,res) {
 
     var page = "<html>"
 
-    // xml data passing
-    page += "<script>"
-    page += "function loadDoc() {"
-    page += "if(document.getElementById(\"withdraw\").value > 10000) {"
-    page += "alert('Maximum withdraw $10000! Retry!'); "
-    page += " } else if (document.getElementById(\"withdraw\").value < 10) {"
-    page += "alert('Minimum withdraw $10! Retry!');"
-    page += " } else {"
-    page += "var message = \"<?xml version='1.0'?>\"+\"<username>\"+\"<account>\"+document.getElementById('account').value+"
-    page += "\"</account>\"+\"<withdraw>\"+document.getElementById(\"withdraw\").value+\"</withdraw>\"+\"</username>\";"
-    page += "var xhttp = new XMLHttpRequest();"
-    page += "xhttp.open(\"POST\", \"/withdraw_success\", false);"
-    page += "xhttp.setRequestHeader('Content-type', 'application/xml');"
-    page += "xhttp.send(message);"
-    page += "alert('Attempting to wirthdraw $' + document.getElementById(\"withdraw\").value)"
-    page += "}};"
-    page += "</script>"
+		page+= "<script type='text/javascript' src='./srcwithdraw.js'></script>"
 
-    page += "<body style='background-color:rgba(13,138,206,0.5);'>"
+    page += "<body bgcolor='#E6E6FA'>"
     page += "<h1>Northside Banking Withdrawing Page</h1><br><br>"
     page += displayBankStatement(xssFilters.inHTMLData(req.session.username));
 
 
     // start form
-    page += "<form onsubmit='return loadDoc()'>"
+    page += "<form name='myFormWithdraw'>"
 
     // drop down menu
     page += "<label for='account'>Choose an account   </label>"
@@ -519,30 +507,14 @@ app.get('/transfer', function(req,res) {
 
 
     // xml data passing
-    page += "<script>"
-    page += "function loadDoc() {"
 
-    page += "var message = \"<?xml version='1.0'?>\"+\"<username>\"+"
-    page += "\"<sender>\"+document.getElementById('sender').value+\"</sender>\"+"
-    page += "\"<receiver>\"+document.getElementById(\"receiver\").value+\"</receiver>\"+"
-    page += "\"<transfer>\"+document.getElementById('transfer').value+ \"</transfer>\"+"
-    page += "\"</username>\";"
-    page += "var xhttp = new XMLHttpRequest();"
-    page += "xhttp.open(\"POST\", \"/transfer_success\", false);"
-    page += "xhttp.setRequestHeader('Content-type', 'application/xml');"
-    page += "xhttp.send(message);"
-    page += "alert('Attempting to transfer $' + document.getElementById(\"transfer\").value + ' from ' + document.getElementById(\"sender\").value +"
-    page += "' to ' + document.getElementById(\"receiver\").value)"
-    page += "};"
-    page += "</script>"
-
-    page += "<body style='background-color:rgba(13,138,206,0.5);'>"
+		page += "<body bgcolor='#E6E6FA'>"
     page += "<h1>Northside Banking Transfer Page</h1><br><br>"
     page += displayBankStatement(xssFilters.inHTMLData(req.session.username));
 
-
+		page +='<script type="text/javascript" src="./srctransfer.js"></script>'
     // form start
-    page += "<form onsubmit='loadDoc()'>"
+    page += "<form name='myFormTransfer'>"
     page += "<label for='account'>Choose an account to transfer from   </label>"
 
     // drop down menu account 1
@@ -614,6 +586,7 @@ app.post('/transfer_success', function(req,res) {
 
     res.end()
 });
+
 
 app.get('/logout', function(req, res){
 
