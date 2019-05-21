@@ -3,6 +3,23 @@ const sessions = require('client-sessions');
 const bodyParser = require("body-parser");
 const helmet = require('helmet')
 
+// Assignment 3 new libraries
+const https = require("https");
+const mysql = require('mysql2');
+const bcrypt = require('bcrypt');
+// -----------------------------
+
+// Connect to local SQL Server
+var mysqlConn=mysql.createConnection({
+	host:"localhost",
+	user:"appaccount",
+	password:"apppass",
+	multipleStatements:true
+});
+
+// hash salts
+const saltRounds=10;
+
 require('body-parser-xml')(bodyParser);
 
 "use strict"
@@ -132,10 +149,46 @@ app.post('/login',function(req,res){
 	// get username and password from form
 	var user = (req.body.account.username);
 	var pass = (req.body.account.password.toString());
+	
+	console.log("User Input - user: " + user);
+	console.log("User Input - pass: " + pass);
+	// Construct the query
+	mysqlConn.query('USE users; SELECT username, password from appusers where `username`=?',
+	// The ?'s will be replaced with the respective elements from this array
+	[user, pass],
+	
+	// The call back when the query completes
+	function(err, qResult) {
+		if (err) throw err;
+		console.log(qResult[1]);
 
-	console.log(user);
-	console.log(pass);
+		// Does the password match?
+		var match = false;
 
+		// Go through the results of the second query
+		qResult[1].forEach(function(account) {
+			if(account['username'] == user && bcrypt.compareSync(pass,account['password'])) {
+			//if (account['username'] == user && account['password'] == pass) {
+				console.log("Match!");
+
+				// We have a match!
+				match = true;
+
+				//break;
+			}
+	});
+	
+	if (match) {
+		req.session.username = user;
+		res.redirect('/dashboard');
+	} else {
+		console.log("Incorrect credentials");
+		// if no matches have been found, we are done
+		res.send("Wrong");
+	}
+
+	// Plaintext implementation
+	/*
 	var correctPass = undefined;
 	var tempobj=undefined;
 	// is valid user?
@@ -161,7 +214,8 @@ app.post('/login',function(req,res){
     res.write("Wrong");
 		res.end();
 	}
-
+	*/
+	});
 });
 
 
@@ -181,6 +235,33 @@ app.post('/create',function(req,res){
     	var password=(req.body.account.password); // get password
     	found=false;
 
+	// create password hash
+	var hash = bcrypt.hashSync(password,saltRound);
+
+	var match=false;
+
+	mysqlConn.query('USE users; SELECT * from appusers where `username`=?,
+	[username],
+
+	// The call back when query completes
+	function(err, rows) {
+		console.log(rows[1].length);
+
+		if (err) throw err;
+		if (!rows[1].length) {
+			my sqlConn.query('USE users; INSERT into appusers(username,password,fname,lname,email,bankacc) VALUES (?,?,?,?,?,?)',
+			[username,hash,firstname,lastname,address,0],
+			
+			function(err, qResult) {
+				if (err) throw err;
+				console.log("User added to database");
+			});
+		} else {
+			mysqlConn.end();
+			console.log("UserName Already Exists");
+		}
+	});
+	/*
 	// check database if unique user id exists
       if(fs.readFileSync("mydb.txt","utf8")!=="")//checks if file is empty
       {
@@ -215,8 +296,9 @@ app.post('/create',function(req,res){
 		// TODO: need to send indicator that the Username already exits
 		console.log("Username already exists");
   	}
+	*/
     res.end();
-
+	
 });
 
 app.post('/add_success', function(req,res) {
@@ -597,4 +679,16 @@ app.get('/logout', function(req, res){
     res.redirect('/');
 });
 
+/*
+https.createServer({
+    key: fs.readFileSync('./MyKey.key'),  // The private key of the server.
+                    // The associated public key is included in the certificate.
+                    // Used for securely distributing symmetric keys during connection setup
+                    // which in turn are then used for encrypting session data
+
+    cert: fs.readFileSync('./MyCertificate.crt'), // The actual certificate
+    passphrase: 'cpsc455'       // The passphrase used for protecting the private key
+}, app)
+.listen(3000);
+*/
 app.listen(3000);
